@@ -2,14 +2,32 @@
 <html>
     <head>
         <title>{{title}}</title>
+        <style>
+            h1{
+                text-align: center;
+            }
+            .error{
+                color: red;
+            }
+        </style>
     </head>
 <body>
     <nav>
         <a href="/blog/">Main Blog Page</a> |
-        <a href="/newpost/">Create a New Post</a>
+        <a href="/newpost/">Create a New Blog Entry</a>
     
     </nav>
+<div>
+    {% with messages = get_flashed_messages(with_categories = True) %}
+        <ul>
+        {% for category, message in messages %}
+            <li>{{message}}</li>
+        {% endfor %}
+        </ul>
+    {% endwith %}
 
+
+</div>
     {% block content %}
     {% endblock %}
 

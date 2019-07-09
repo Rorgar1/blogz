@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -11,41 +11,61 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
-    blog_body = db.Column(db.Text)
-    completed = db.Column(db.Boolean)
+    blog_body = db.Column(db.Text())
 
-    def __init__(self, title, blog_body):
+    def __init__(self, title, body):
         self.title = title
-        self.blog_body = blog_body
-        self.completed = False
+        self.body = body
 
 
 
 #must display all the blog posts
-@app.route('/blog', methods=['POST', 'GET'])
+@app.route('/')
 def index():
+    return redirect('/blog')
+
+@app.route('/blog', methods=['POST', 'GET'])
+def blog():
+    blog_id = request.args.get('id')
+    title = "Build A Blog"
+
+    if blog_id == None:
+        posts = Blog.query.all()
+        return render_template('blog.html', posts=posts, title='Build-a-blog')
+    else:
+        post = Blog.query.get(blog_id)
+        return render_template('blog.html', post=post, title='Blog Entry')   
+
+@app.route('/newpost', methods=['POST', 'GET'])
+def newpost():
+    if request.method == 'GET':
+        return render_template('newpost.html', title="New Blog Entry")
 
     if request.method == 'POST':
-        title = request.form['blog']
-        new_blog = Blog(title)
-        db.session.add(new_blog)
-        db.session.commit()
+        blog_title = request.form['title']
+        blog_body = request.form['body']
+        new_blog = Blog(blog_title, blog_body)
 
-    blogs = Blog.query.filter_by(completed=False).all()
-    completed_blogs = Blog.query.filter_by(completed=True).all()
-    return  render_template('blog.html', title="Build A Blog!",
-        blogs=blogs, completed_blogs=completed_blogs)
+        title_error = ''
+        body_error = ''
 
- #submit a new post at /newpost route. After submitting new post, app displays the main blog page       
-@app.route('/newpost', methods=['POST'])
-def newpost():
+        if len(blog_title) == 0:
+            title_error = "Please enter a title."
+        if len(blog_body) == 0:
+            body_error = "Pleae create an entry."
 
-    blog_id = int(request.form['blog-id'])
-    blog = Blog.query.get(blog_id)
-    db.session.add(blog)
-    db.session.commit()
+        if not title_error and not body_error:
+            db.session.add(new_blog)
+            db.session.commit()
+            return redirect('/blog?id={}'.format(new_blog.id))
+        
+        else:
+            blogs = Blog.query.all()
+            return render_template('newpost.html', title="Build a Blog!", blogs=blogs,
+                blog_title=blog_title, title_error=title_error, 
+                blog_body=blog_body, body_error=body_error)
 
-    return redirect('/blog')
+
 
 
 if __name__ == '__main__':

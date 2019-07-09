@@ -1,25 +1,22 @@
+{% extends "base.html" %}
 
-        <ul>
-            {% for blog in blogs %}
-            <li>{{blog.name}}
-                <form method="POST" action="/newpost" style="display:inline-block;">
-                    <input type="hidden" name="post-id" value="{{post.id}}" />
-                    <input type="submit" value="Post Entry" />
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
+{% block content %}
 
-    {% endif %}
-
-    <hr />
-
-    <h2>Blog Posts</h2>
-
-    <ul>
-        {% for post in completed_posts %}
-        <li>{{post.name}}</li>
-        {% endfor %}
-    </ul>
+    <h2>New Blog Entry</h2>
+    <form method='POST' action="/newpost">
+        <label for='title'>
+            New Blog Title:<br>
+            <input name="title" type="text" value='{{blog_title}}' />
+            <span class="error">{{title_error}}</span>
+        </label>
+        <br>
+        <label for='body'>
+            Create New Blog Entry:<br>
+            <textarea name="body" type="text" >{{blog_body}}</textarea>
+            <span class="error">{{body_error}}</span>
+        </label>
+        <br>
+        <input type="submit" value='Post New Blog' />
+    </form>
 
 {% endblock %}
