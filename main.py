@@ -10,26 +10,33 @@ db = SQLAlchemy(app)
 class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    blog = db.Column(db.Text)
+    title = db.Column(db.String(120))
+    blog_body = db.Column(db.Text)
+    completed = db.Column(db.Boolean)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, title, blog_body):
+        self.title = title
+        self.blog_body = blog_body
+        self.completed = False
 
 
 
-
+#must display all the blog posts
 @app.route('/blog', methods=['POST', 'GET'])
 def index():
 
     if request.method == 'POST':
-        blog_name = request.form['blog']
-        new_blog = Blog(blog_name)
+        title = request.form['blog']
+        new_blog = Blog(title)
         db.session.add(new_blog)
         db.session.commit()
 
-    blogs = Blog.query.all()
-    return  render_template('blog.html', title="Build A Blog!", blogs=blogs)
-        
+    blogs = Blog.query.filter_by(completed=False).all()
+    completed_blogs = Blog.query.filter_by(completed=True).all()
+    return  render_template('blog.html', title="Build A Blog!",
+        blogs=blogs, completed_blogs=completed_blogs)
+
+ #submit a new post at /newpost route. After submitting new post, app displays the main blog page       
 @app.route('/newpost', methods=['POST'])
 def newpost():
 
