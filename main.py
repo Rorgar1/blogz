@@ -60,24 +60,7 @@ def new_post():
                 blog_title=blog_title, blog_body=blog_body)
     
     return render_template('newpost.html', title='New Entry')
-       # if len(blog_title) == 0:
-       #     title_error = "Please enter a title."
-       # if len(blog_body) == 0:
-      #      body_error = "Pleae create an entry."
-
-      #  if not title_error and not body_error:
-       #     db.session.add(new_blog)
-       #     db.session.commit()
-       #     return redirect('/blog?id={}'.format(new_blog.id))
-        
-       # else:
-        #    blogs = Blog.query.all()
-        #    return render_template('newpost.html', title="Build a Blog!", blogs=blogs,
-        #        blog_title=blog_title, title_error=title_error, 
-        #        blog_body=blog_body, body_error=body_error)
-
-
-
+ 
 
 if __name__ == '__main__':
     app.run()
