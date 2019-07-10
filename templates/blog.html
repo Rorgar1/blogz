@@ -4,14 +4,14 @@
     
     <h1>Build a Blog</h1>
 
-    {% if blog|length == 0 %}
-    <p>No posts yet. <a href="/newpost">Create an Entry!</a></p>
+    {% if posts|length == 0 %}
+    <h3>No blog posts yet.</h3>
     {% else %}
     
-    {% for blog in blog %}
+    {% for post in posts %}
     
-    <a href="/blog?id={{body.id}}"><h2>{{blog.title}}</h2></a>
-    <p>{{blog.body}}</p>
+    <a href="/blog?id={{post.id}}"><h2>{{post.title}}</h2></a>
+    <p>{{post.body}}</p>
     <hr>            
     
     {% endfor %}  
