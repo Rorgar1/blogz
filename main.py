@@ -40,19 +40,18 @@ def blog():
 def new_post():
 
     if request.method == 'POST':
-        blog_title = request.form['blog-title']
-        blog_body = request.form['blog-body']
-
+        blog_title = request.form['blog_title']
+        blog_body = request.form['blog_body']
+        new_entry = Blog(blog_title, blog_body)
         title_error = ''
         body_error = ''
 
         if not blog_title:
             title_error = "Please enter a blog title"
         if not blog_body:
-            body_error = "Please enter a blog entry"
+            body_error = "Cannot leave body blank"
 
         if not body_error and not title_error:
-            new_entry = Blog(blog_title, blog_body)     
             db.session.add(new_entry)
             db.session.commit()        
             return redirect('/blog?id={}'.format(new_entry.id)) 
