@@ -18,11 +18,11 @@ class Blog(db.Model):
         self.body = body
 
 
-
 #must display all the blog posts
 @app.route('/')
 def index():
     return redirect('/blog')
+
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
@@ -34,13 +34,14 @@ def blog():
     else:
         post = Blog.query.get(blog_id)
         return render_template('entry.html', post=post, title='Blog Entry')   
+        
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
 
     if request.method == 'POST':
         blog_title = request.form['blog-title']
-        blog_body = request.form['blog-entry']
+        blog_body = request.form['blog-body']
 
         title_error = ''
         body_error = ''
