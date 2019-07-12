@@ -15,11 +15,11 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
-    blog_body = db.Column(db.Text())
+    blog_body = db.Column(db.Text)
 
-    def __init__(self, title, body):
+    def __init__(self, title, blog_body):
         self.title = title
-        self.body = body
+        self.blog_body = blog_body
 
 
 #redirect to display all the blog posts
@@ -46,7 +46,7 @@ def new_post():
     if request.method == 'POST':
         blog_title = request.form['blog_title']
         blog_body = request.form['blog_body']
-        new_entry = Blog(blog_title, blog_body)
+       
         title_error = ''
         body_error = ''
 #error messages for blank fields
@@ -56,6 +56,7 @@ def new_post():
             body_error = "Cannot leave body blank"
 #add entry when all fields are filled in
         if not body_error and not title_error:
+            new_entry = Blog(blog_title, blog_body)           
             db.session.add(new_entry)
             db.session.commit()        
             return redirect('/blog?id={}'.format(new_entry.id)) 
