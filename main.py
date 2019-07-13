@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 #creates a Blog class with title and body
 class Blog(db.Model):
 
-    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     blog_body = db.Column(db.Text)
 
@@ -21,11 +21,65 @@ class Blog(db.Model):
         self.title = title
         self.blog_body = blog_body
 
+#creates a User class with email and password 
+class User(db.Model):
+
+    owner_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String(120))
+   
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+#login handler
+@app.route('/login', methods=['POST','GET'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.pasword == password:
+            #To do: remember user has logged in
+            return redirect('/')
+        else:
+            #add explanation why login failes
+            return '<h1>Error!</h1>'
+
+    return render_template('login.html')
+
+#signup handler
+@app.route('/signup', methods=['POST','GET'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
+
+        #to do: validate user's data
+
+        existing_user = User.query.filter_by(username=username).first()
+        if not existing_user:
+            new_user = User(username,password)
+            db.session.add(new_user)
+            db.session.commit()
+            # TODO - "remember" the user
+            return redirect('/')
+        else:
+            # TODO - user better response messaging
+            return "<h1>Duplicate user</h1>"
+
+
+
+    return render_template('signup.html')
+
 
 #redirect to display all the blog posts
 @app.route('/')
 def index():
     return redirect('/blog')
+
 
 #display all the blog posts
 @app.route('/blog', methods=['POST', 'GET'])
