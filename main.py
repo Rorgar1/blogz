@@ -49,7 +49,7 @@ class User(db.Model):
 #requires user to log in
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog']
+    allowed_routes = ['login', 'signup', 'blog', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         redirect('/login')
 
@@ -63,6 +63,7 @@ def login():
         username = request.form['username']
         
         user = User.query.filter_by(username=username).first()
+        
         if user and user.password == password:                      #conditional breaks if user == None
             session['username'] = username
             flash('Logged in')
@@ -85,7 +86,7 @@ def signup():
         password = request.form['password']
         verify = request.form['verify']
 
-        #to do: validate user's data
+        #validates user's data
 
         existing_user = User.query.filter_by(username=username).first()
         
@@ -118,7 +119,9 @@ def logout():
 #redirect to display all the blog posts
 @app.route('/')
 def index():
-    return redirect('/blog')
+    users = User.query.all()
+    return render_template('index.html', users=users, header='Blog Users')
+
 
 
 
