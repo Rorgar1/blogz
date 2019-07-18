@@ -61,6 +61,7 @@ def require_login():
 #login handler
 @app.route('/login', methods=['POST','GET'])
 def login():
+
    
     if request.method == 'POST':
         password = request.form['password']
@@ -70,7 +71,7 @@ def login():
         
         if user and check_pw_hash(password, user.pw_hash):                      #conditional breaks if user == None
             session['username'] = username
-            flash('Logged in')
+            flash('Logged in; welcome back, '+ user.username + '!')
             return redirect('/newpost')
         else:
             flash('User password is incorrect, or user does not exist', 'error')
